@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -29,11 +30,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        perlinArray = PerlinFuckery.getPerlinArray(7);
-
         grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
 
+        //Slider slider = new Slider(0, 10, 7);
+
+        perlinArray = PerlinShitery.getPerlinArray();
+        //perlinArray = PerlinFuckery.getPerlinArray(0.3);
 
         StackPane layout = new StackPane();
         layout.getChildren().add(grid);
@@ -126,9 +129,19 @@ public class Main extends Application {
         block.setWidth(BLOCK_SIZE);
         block.setHeight(BLOCK_SIZE);
 
-        double perlinValueToColour = (perlinValue*0.9) + 0.5;
-        block.setFill(Color.color(perlinValueToColour, perlinValueToColour, perlinValueToColour));
-
+        double perlinValueToColour = (perlinValue*0.9) + 0.3;
+        if (Math.floor(perlinValue * 100) == 4) {
+            block.setFill(Color.color(0.7, 0.4, 0.8));
+        }
+        else {
+            if (perlinValueToColour > 1){
+                perlinValueToColour = 1;
+            }
+            else if (perlinValueToColour < 0){
+                perlinValueToColour = 0;
+            }
+            block.setFill(Color.color(perlinValueToColour, perlinValueToColour, perlinValueToColour));
+        }
         //Checks to see if out of bounds or something
         /*
         if (height == WORLD_HEIGHT) { //1 block outside the border
