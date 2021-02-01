@@ -13,7 +13,8 @@ public class PerlinShitery {
     private static final int WORLD_WIDTH = 512;
     private static final int WORLD_HEIGHT = 512;
 
-    static int p[] = new int[512], permutation[] = { 151,160,137,91,90,15,
+    static int p[] = new int[512];
+    static int permutation[] = { 151,160,137,91,90,15,
             131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
             190, 6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
             88,237,149,56,87,174,125,20,136,171,168, 68,175,74,165,71,134,139,48,27,166,
@@ -27,39 +28,62 @@ public class PerlinShitery {
             49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
             138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
     };
-    static { for (int i=0; i < 256 ; i++) p[256+i] = p[i] = permutation[i]; }
 
-    public static void main(String[] args) {
 
+    private static void putInPermutation(){
+        for (int i = 0; i < 256 ; i++) p[256+i] = p[i] = permutation[i];
     }
 
-    private static void shuffle(int[] p){
-        int temp = 0;
+    public static void main(String[] args) {
+    }
+
+    public static void shuffle(){
+        long startTime = System.nanoTime();
+        System.out.println("    Suffling...");
+        int temp;
         for (int i = 0; i < p.length; i++){
             Random random = new Random();
-            int pos1 = random.nextInt(p.length);
-            int pos2 = random.nextInt(p.length);
+            int pos1 = random.nextInt(permutation.length);
+            int pos2 = random.nextInt(permutation.length/2);
             temp = permutation[pos1];
-            permutation[pos1] = permutation[pos2];
+            permutation[pos2] = permutation[pos1];
             permutation[pos1] = temp;
         }
+        putInPermutation();
+        long endTime = System.nanoTime();
+        System.out.println("    Finished Shuffling " + (endTime - startTime) / 1000000 + "ms");
     }
 
     public static Double[][] getPerlinArray(){
+        long startTime = System.nanoTime();
+        System.out.println("    Getting Perlin Array...");
+
         Double[][] perlinArray = new Double[WORLD_WIDTH][WORLD_HEIGHT];
-        for(int x = 0; x < WORLD_WIDTH; x++){
-            for (int y = 0; y < WORLD_HEIGHT; y++){
-                double n = noise2D(x*0.01, y*0.01);
-                System.out.println((n));
-                perlinArray[x][y] = (n+1)/2;
+
+        //Fill with 0s
+        for (int width = 0; width < WORLD_WIDTH; width++) {
+            for (int height = 0; height < WORLD_HEIGHT; height++){
+                perlinArray[width][height] = 0.0;
             }
         }
+
+        for(int x = 0; x < WORLD_WIDTH; x++){
+            for (int y = 0; y < WORLD_HEIGHT; y++){
+                double n = noise2D(x*0.03, y*0.03);
+
+                perlinArray[x][y] = n + perlinArray[x][y];
+            }
+        }
+
+        long endTime = System.nanoTime();
+        System.out.println("    Got Perlin Array" + (endTime - startTime) / 1000000 + "ms");
+        shuffle();
         return perlinArray;
     }
 
     private static double noise2D(double x, double y) {
-        int X = (int)Math.floor(x) & 63;//255 is the wrap value
-        int Y = (int)Math.floor(y) & 63;
+        int X = (int)Math.floor(x) & 255;//255 is the wrap value
+        int Y = (int)Math.floor(y) & 255;
 
         double xf = x - Math.floor(x);
         double yf = y - Math.floor(y);

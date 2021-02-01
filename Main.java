@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
@@ -14,6 +15,8 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Random;
+import javafx.scene.control.Slider;
+
 
 public class Main extends Application {
 
@@ -24,21 +27,26 @@ public class Main extends Application {
     private final int WORLD_WIDTH = 512;
     private final int WORLD_HEIGHT = 512;
 
+    private double threshold = 0.51;
+
+    private double biggestPerlin = 0.06969;
+    private double smollestPerlin = 0.6969;
+
 
     Stage window;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-
         grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
 
-        //Slider slider = new Slider(0, 10, 7);
-
+        PerlinShitery.shuffle();
         perlinArray = PerlinShitery.getPerlinArray();
-        //perlinArray = PerlinFuckery.getPerlinArray(0.3);
+        perlinArray = PerlinShitery.getPerlinArray();
 
         StackPane layout = new StackPane();
+
+        //Button button = new Button("Click me");
         layout.getChildren().add(grid);
 
         window = primaryStage;
@@ -116,34 +124,50 @@ public class Main extends Application {
         doFrame();
 
         long endTime = System.nanoTime();
-        System.out.println( (endTime - startTime) / 1000000 + "ms");
+        System.out.println("doEvent() done in:" + (endTime - startTime) / 1000000 + "ms");
+        System.out.println(biggestPerlin + " " + smollestPerlin);
     }
 
     public void drawSquare(int height, int width, GridPane grid){
 
         //each block at x,y coords of width,height has a unique ID, which determines the colour
         Block block = blocksArray[width][height];
-        int blockID = block.getBlockID();
-        double perlinValue = block.getPerlinValue();
-
         block.setWidth(BLOCK_SIZE);
         block.setHeight(BLOCK_SIZE);
+        int blockID = block.getBlockID();
 
-        double perlinValueToColour = (perlinValue*0.9) + 0.3;
-        if (Math.floor(perlinValue * 100) == 4) {
-            block.setFill(Color.color(0.7, 0.4, 0.8));
+        double perlinValue = block.getPerlinValue();
+        double perlinValueToColour = (perlinValue + 1)/2;
+
+        if (perlinValue > biggestPerlin){
+            biggestPerlin = perlinValue;
         }
-        else {
-            if (perlinValueToColour > 1){
-                perlinValueToColour = 1;
-            }
-            else if (perlinValueToColour < 0){
-                perlinValueToColour = 0;
-            }
-            block.setFill(Color.color(perlinValueToColour, perlinValueToColour, perlinValueToColour));
+        if (perlinValue < smollestPerlin){
+            smollestPerlin = perlinValue;
         }
-        //Checks to see if out of bounds or something
+
+        if (true){
+            block.setFill(Color.color(perlinValueToColour * 0.7, perlinValueToColour * 0.7, perlinValueToColour * 0.7));
+        }
+        else
+            block.setFill(Color.color(perlinValueToColour * 0.4, perlinValueToColour * 0.4, perlinValueToColour * 0.4));
+
+
+//        if (Math.floor(perlinValue * 100) == 2) {
+//            block.setFill(Color.color(0.7, 0.4, 0.8));
+//        }
+//        else {
+//            if (perlinValueToColour > 1){
+//                perlinValueToColour = 1;
+//            }
+//            else if (perlinValueToColour < 0){
+//                perlinValueToColour = 0;
+//            }
+//            block.setFill(Color.color(perlinValueToColour, perlinValueToColour, perlinValueToColour));
+//        }
         /*
+        //Checks to see if out of bounds or something
+
         if (height == WORLD_HEIGHT) { //1 block outside the border
             rec.setFill(Color.color(1, 0.33, 0.3));
         }
@@ -181,7 +205,7 @@ public class Main extends Application {
         GridPane.setRowIndex(block, height);
         GridPane.setColumnIndex(block, width);
 
-        grid.getChildren().addAll(block);
+        grid.getChildren().add(block);
 
         //Setting color to the scene
         //scene.setFill(Color.color(0.9, 0.115, 0.263));
