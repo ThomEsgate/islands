@@ -3,7 +3,7 @@
  * https://gist.github.com/gunvirranu/6816d65c0231981787ebefd3bdb61f98
  */
 
-package sample;
+package uk.ac.soton.comp1206;
 
 public class Vector2D {
 
