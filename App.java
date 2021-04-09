@@ -28,7 +28,7 @@ public class App extends Application {
 
         Button button = new Button("Press me nerd");
         button.setOnAction(e -> {
-            //AlertBox.display("Title", "O shit :o");
+            //Main.s
 
         });
 

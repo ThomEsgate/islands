@@ -1,4 +1,4 @@
-package sample;
+package uk.ac.soton.comp1206;
 
 import javafx.scene.shape.Rectangle;
 

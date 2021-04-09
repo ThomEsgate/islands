@@ -20,6 +20,8 @@ public class PerlinNoiseGenerator {
     private static final int WORLD_WIDTH = 512;
     private static final int WORLD_HEIGHT = 512;
 
+    private static final long SEED = 2;
+
     static int p[] = new int[512];
     static int permutation[] = { 151,160,137,91,90,15,
             131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
@@ -61,11 +63,11 @@ public class PerlinNoiseGenerator {
         System.out.println("    Finished Shuffling " + (endTime - startTime) / 1000000 + "ms");
     }
 
-    public static Double[][] getPerlinArray(){
+    public static double[][] getPerlinArray(){
         long startTime = System.nanoTime();
         System.out.println("    Getting Perlin Array...");
 
-        Double[][] perlinArray = new Double[WORLD_WIDTH][WORLD_HEIGHT];
+        double[][] perlinArray = new double[WORLD_WIDTH][WORLD_HEIGHT];
 
         //Fill with 0s
         for (int width = 0; width < WORLD_WIDTH; width++) {
